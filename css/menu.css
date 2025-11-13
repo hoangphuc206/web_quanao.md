@@ -1,0 +1,140 @@
+/* Side Menu Styles */
+.side-menu {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    z-index: 1000;
+    top: 0;
+    left: 0;
+    background-color: #ffffff;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 90px;
+    box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+    border-right: 1px solid #eee;
+}
+
+.side-menu.active {
+    width: 250px;
+}
+
+.side-menu ul {
+    padding: 0;
+    margin: 0;
+}
+
+.side-menu li {
+    list-style: none;
+}
+
+.side-menu a {
+    padding: 15px 25px;
+    text-decoration: none;
+    font-size: 16px;
+    color: #333;
+    display: block;
+    transition: 0.3s;
+    border-bottom: 1px solid #f1f1f1;
+}
+
+.side-menu a:hover {
+    color: #0f9d8a;
+    background-color: #f9f9f9;
+    padding-left: 30px;
+}
+
+.side-menu .sub-menu {
+    background-color: #f9f9f9;
+    display: none;
+    position: static;
+    box-shadow: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    width: 100%;
+    border-top: none;
+    padding: 0;
+}
+
+.side-menu .sub-menu a {
+    padding-left: 45px;
+    font-size: 14px;
+}
+
+.side-menu .has-dropdown > a::after {
+    content: "\F282";
+    font-family: bootstrap-icons;
+    float: right;
+    transition: transform 0.3s;
+}
+
+.side-menu .has-dropdown.active > a::after {
+    transform: rotate(90deg);
+}
+
+.menu-toggle {
+    position: fixed;
+    top: 30px;
+    left: 20px;
+    z-index: 1001;
+    cursor: pointer;
+    font-size: 24px;
+    background-color: #0f9d8a;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    transition: all 0.3s ease;
+}
+
+.menu-toggle:hover {
+    background-color: #0a8a7a;
+}
+
+.content-wrapper {
+    transition: margin-left 0.5s;
+}
+
+.content-wrapper.shifted {
+    margin-left: 250px;
+}
+
+/* Adjust header for menu button */
+header {
+    padding-left: 70px;
+}
+
+/* Overlay when menu is open on mobile */
+.overlay {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+}
+
+.overlay.active {
+    display: block;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .side-menu.active {
+        width: 100%;
+    }
+    
+    .content-wrapper.shifted {
+        margin-left: 0;
+    }
+    
+    header {
+        padding-left: 60px;
+    }
+}
