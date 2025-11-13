@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="vi">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop Áo F&V</title>
+    <link href="css/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/menu.css">
+    <link rel="stylesheet" href="css/cart.css">
+</head>
+
+<body>
+    <!-- Menu Toggle Button -->
+    <div class="menu-toggle" id="menuToggle">
+        <i class="bi bi-list"></i>
+    </div>
+
+    <!-- Side Menu -->
+    <div class="side-menu" id="sideMenu">
+        <ul>
+            <li><a href="index.html"><i class="bi bi-house-door"></i> Trang chủ</a></li>
+            <li class="has-dropdown">
+                <a href="#"><i class="bi bi-tag"></i> Danh mục sản phẩm</a>
+                <ul class="sub-menu">
+                    <li><a href="tshirt.html">Áo thun</a></li>
+                    <li><a href="polo.html">Polo</a></li>
+                    <li><a href="outerwear.html">Áo khoác</a></li>
+                </ul>
+            </li>
+
+            <li><a href="aboutus.html"><i class="bi bi-info-circle"></i> Về chúng tôi</a></li>
+            <li><a href="lienhe.html"><i class="bi bi-envelope"></i> Liên hệ</a></li>
+            <li><a href="user.html"><i class="bi bi-person"></i> Tài khoản</a></li>
+        </ul>
+    </div>
+
+    <!-- Overlay for mobile -->
+    <div class="overlay" id="overlay"></div>
+
+    <!-- Main Content Wrapper -->
+    <div class="content-wrapper" id="contentWrapper">
+        <!-- Popup quảng cáo (hiển thị ngay khi vào trang) -->
+        <div id="popup" class="popup">
+            <div class="popup-content">
+                <span class="close-btn" id="closePopupBtn">&times;</span>
+
+                <!-- Thêm hình ảnh vào popup -->
+                <img src="image/popup.jpg"
+                    alt="Quảng Cáo" class="popup-image">
+
+                <h2>Quảng Cáo Đặc Biệt!</h2>
+                <p>Giảm giá 50% cho tất cả sản phẩm! Đừng bỏ lỡ cơ hội này.</p>
+            </div>
+        </div>
+
+        <header>
+            <div class="logo">
+                <img src="image/ảnh F&V.png" width="80" height="80" alt="F&V Logo">
+            </div>
+            <div class="menu">
+                <ul class="main-menu">
+                    <li><a href="index.html">Trang chủ</a></li>
+                    <li class="has-dropdown">
+                        <a href="#">Sản phẩm</a>
+                        <ul class="sub-menu">
+                            <li><a href="tshirt.html">Áo thun</a></li>
+                            <li><a href="polo.html">Polo</a></li>
+                            <li><a href="outerwear.html">Áo khoác</a></li>
+                        </ul>
+                    </li>
+                    <li><a href="aboutus.html">Về chúng tôi</a></li>
+                    <li><a href="user.html">Thông tin người dùng</a></li>
+                    <li><a href="lienhe.html">Liên hệ</a></li>
+                </ul>
+            </div>
+            <div class="others">
+                <ul class="others-menu">
+                    <li><input placeholder="Search" type="text"> <i class="bi bi-search"></i></li>
+                    <li><a href="cart.html"><i class="bi bi-bag-check-fill" title="Giỏ hàng"></i></a></li>
+                    <li><a href="login.html"><i class="bi bi-person-circle" title="Đăng nhập"></i></a></li>
+                    <li><a href="register.html"><i class="bi bi-pencil-square" title="Đăng ký"></i></a></li>
+                </ul>
+            </div>
+        </header>
+        <section id="slider">
+            <div class="aspect-ratio-169">
+                <img src="image/ảnh F&Vsl2.jpg" alt="F&V New Collection" loading="lazy">
+                <img src="image/ảnh nền.png" alt="F&V Summer Style" loading="lazy">
+                <img src="image/ảnh f&vsl3.jpg" alt="F&V Special Offer" loading="lazy">
+            </div>
+            <div class="dot-container">
+                <div class="dot active"></div>
+                <div class="dot"></div>
+                <div class="dot"></div>
+            </div>
+        </section>
+
+        <section id="products">
+            <h2>Sản phẩm nổi bật</h2>
+            <div class="product-list">
+                <div class="product-item">
+                    <a href="áo khoác/sweater.html">
+                    <img src="image/fv6.jpg" alt="Áo Be">
+                </a>
+                    <div class="product-details">
+                        
+                        <p>F&V Sweater kem </p>
+                        <span class="price">699.000 VNĐ</span>
+                    </div>
+                </div>
+        
+                <div class="product-item">
+                    <a href="áo thun/thundengiua.html">
+                        <img src="image/thun đen giữa.jpg" alt="áo thun">
+                        <div class="product-details">
+                            <p>F&V áo thun đen </p>
+                            <span class="price">299.000 VNĐ</span>
+                        </div>
+                    </a>
+                </div>
+        
+                <div class="product-item">
+                    <a href="polo/polokem2.html">
+                    <img src="image/polo kem 2.jpg" alt="Áo thun">
+                    </a>
+                    <div class="product-details">
+                        
+                        <p>F&V áo polo kem </p>
+                        <span class="price">450.000 VNĐ</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <footer>
+            <div class="footer-container">
+                <div class="footer-logo">
+                    <img src="image/ảnh F&V.png" width="120" height="120" alt="F&V Logo">
+                </div>
+                <div class="footer-info">
+                    <h3>Thông tin liên hệ</h3>
+                    <p>📍 Địa chỉ: 29G7 DCT7 Phường THT Quận 12 TPHCM</p>
+                    <p>📞 Hotline: 0787917097</p>
+                    <p>✉️ Email: hphuccc206@gmail.com</p>
+                </div>
+                <div class="footer-links">
+                    <h3>Liên kết nhanh</h3>
+                    <ul>
+                        <li><a href="index.html">Trang chủ</a></li>
+                        <li><a href="aboutus.html">Về chúng tôi</a></li>
+                        <li><a href="lienhe.html">Liên hệ</a></li>
+                    </ul>
+                </div>
+                <div class="footer-social">
+                    <h3>Kết nối với chúng tôi</h3>
+                    <a href="#"><i class="bi bi-facebook"></i></a>
+                    <a href="#"><i class="bi bi-instagram"></i></a>
+                    <a href="#"><i class="bi bi-tiktok"></i></a>
+                </div>
+            </div>
+            <p class="footer-bottom">© 2025 F&V Fashion. All rights reserved.</p>
+        </footer>
+    </div>
+
+    <script src="js/func.js"></script>
+    <script src="js/menu.js"></script>
+</body>
+
+</html>
