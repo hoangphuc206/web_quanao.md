@@ -1,17 +1,16 @@
-// Thư viện cần thiết cho VNPAY
-const moment = require('moment-timezone'); // Dùng để định dạng thời gian
+// File: netlify/functions/vnpay-create.js
+
+const moment = require('moment-timezone'); 
 const crypto = require('crypto');
 const querystring = require('querystring');
-const { URL } = require('url');
 
-// Khai báo các biến từ Netlify Environment Variables
+// --- Khai báo Biến Môi trường ---
 const tmnCode = process.env.VNP_TMN_CODE;
 const hashSecret = process.env.VNP_HASH_SECRET;
-const vnpUrl = process.env.VNP_URL;
-const returnUrl = process.env.VNP_RETURN_URL;
+const vnpUrl = process.env.VNP_URL; // URL API của VNPAY
+const returnUrl = process.env.VNP_RETURN_URL; // URL trả về (sẽ là netlify function vnpay-return.js)
 
 exports.handler = async (event) => {
-    // 1. Chỉ chấp nhận phương thức POST
     if (event.httpMethod !== 'POST') {
         return {
             statusCode: 405,
@@ -19,7 +18,6 @@ exports.handler = async (event) => {
         };
     }
 
-    // 2. Lấy dữ liệu từ body (amount, orderId, bankCode...)
     let bodyData;
     try {
         bodyData = JSON.parse(event.body);
@@ -30,9 +28,9 @@ exports.handler = async (event) => {
         };
     }
 
+    // Lấy dữ liệu cần thiết từ frontend
     const { amount, orderId, orderInfo, locale } = bodyData; 
     
-    // Kiểm tra dữ liệu bắt buộc
     if (!amount || !orderId || !orderInfo) {
          return {
             statusCode: 400,
@@ -40,26 +38,27 @@ exports.handler = async (event) => {
         };
     }
     
-    // 3. Chuẩn bị các tham số VNPAY
+    // --- 1. Chuẩn bị các tham số VNPAY ---
     const vnp_Params = {};
     vnp_Params['vnp_Version'] = '2.1.0';
-    vnp_Params['vnp_Command'] = 'pay'; // Lệnh mặc định là pay
+    vnp_Params['vnp_Command'] = 'pay'; 
     vnp_Params['vnp_TmnCode'] = tmnCode;
-    vnp_Params['vnp_Amount'] = amount * 100; // VNPAY tính bằng đơn vị 'cent', nên nhân 100
+    vnp_Params['vnp_Amount'] = amount * 100; // Nhân 100 vì VNPAY tính bằng 'cent'
     vnp_Params['vnp_CurrCode'] = 'VND';
-    vnp_Params['vnp_TxnRef'] = orderId;
+    vnp_Params['vnp_TxnRef'] = orderId; // Mã đơn hàng duy nhất
     vnp_Params['vnp_OrderInfo'] = orderInfo;
-    vnp_Params['vnp_OrderType'] = 'other'; // Loại hàng hóa (bán hàng online)
-    vnp_Params['vnp_Locale'] = locale || 'vn'; // Ngôn ngữ (vn/en)
+    vnp_Params['vnp_OrderType'] = 'other'; 
+    vnp_Params['vnp_Locale'] = locale || 'vn'; 
     vnp_Params['vnp_ReturnUrl'] = returnUrl;
     
-    // Lấy ngày giờ hiện tại theo múi giờ Việt Nam
-    vnp_Params['vnp_CreateDate'] = moment().tz('Asia/Ho_Chi_Minh').format('YYYYMMDDHHmmss');
+    // Ngày giờ tạo giao dịch theo múi giờ Việt Nam
+    const createDate = moment().tz('Asia/Ho_Chi_Minh').format('YYYYMMDDHHmmss');
+    vnp_Params['vnp_CreateDate'] = createDate;
     
-    // Lấy IP của client (nếu có thể)
+    // Lấy IP của client
     vnp_Params['vnp_IpAddr'] = event.headers['client-ip'] || event.headers['x-forwarded-for'] || '127.0.0.1';
 
-    // 4. Sắp xếp và Tạo Chuỗi Hash (Secure Hash)
+    // --- 2. Sắp xếp và Tạo Chuỗi Hash (Secure Hash) ---
     
     // Sắp xếp các tham số theo thứ tự Alphabet
     const sortedParams = Object.keys(vnp_Params).sort().reduce((acc, key) => {
@@ -70,23 +69,15 @@ exports.handler = async (event) => {
     // Nối các tham số thành chuỗi raw
     const signData = querystring.stringify(sortedParams, { encode: false });
     
-    // Tạo Secure Hash
+    // Tạo Secure Hash bằng thuật toán SHA-512
     const hmac = crypto.createHmac("sha512", hashSecret);
     const secureHash = hmac.update(signData).digest("hex");
     
-    // 5. Tạo URL Thanh toán
+    // --- 3. Tạo URL Thanh toán và trả về ---
     const paymentUrl = vnpUrl + '?' + querystring.stringify(sortedParams) + '&vnp_SecureHash=' + secureHash;
 
-    // 6. Trả về URL cho Frontend
-    try {
-        return {
-            statusCode: 200,
-            body: JSON.stringify({ paymentUrl: paymentUrl })
-        };
-    } catch (error) {
-        return {
-            statusCode: 500,
-            body: JSON.stringify({ message: "Error processing VNPAY URL", error: error.message })
-        };
-    }
+    return {
+        statusCode: 200,
+        body: JSON.stringify({ paymentUrl: paymentUrl })
+    };
 };
