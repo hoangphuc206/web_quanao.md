@@ -1,0 +1,27 @@
+{
+ "name": "01.-deancuoiki_nhom1_ykl",
+ "version": "1.0.0",
+ "description": "",
+ "main": "index.js",
+ "scripts": {
+ "test": "echo \"Error: no test specified\" && exit 1"
+ },
+ "repository": {
+  "type": "git",
+  "url": "git+https://github.com/nguyendaotuanh05-collab/web_coffee.git"
+ },
+ "keywords": [],
+ "author": "",
+ "license": "ISC",
+ "type": "commonjs",
+ "bugs": {
+  "url": "https://github.com/nguyendaotuanh05-collab/web_coffee/issues"
+},
+ "homepage": "https://github.com/nguyendaotuanh05-collab/web_coffee#readme",
+ "dependencies": {
+ "axios": "^1.13.2",
+ "crypto-js": "^4.2.0",
+ "moment": "^2.29.1",
+ "vnpay": "^2.4.4"
+ }
+}
