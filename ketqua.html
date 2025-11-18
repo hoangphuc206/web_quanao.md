@@ -1,1 +1,219 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kết Quả Giao Dịch ECLIPSE COFFEE</title>
+    <style>
+        /* CSS mô phỏng giao diện VNPAY */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #ffffff;
+            border: 1px solid #d9d9d9;
+            padding: 40px;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .logo-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .status-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            font-size: 24px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        /* Style cho trạng thái Thành công */
+        .success .status-icon {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: #52c41a;
+        }
+        /* Style cho trạng thái Thất bại/Lỗi */
+        .failed .status-icon, .hash-error .status-icon {
+            background-color: #fff2f0;
+            border: 1px solid #ffccc7;
+            color: #ff4d4f;
+        }
+        .custom-logo { /* Đổi tên class để phù hợp hơn */
+            width: 120px; /* Tùy chỉnh kích thước logo của bạn */
+            height: auto;
+            margin-bottom: 15px;
+        }
+        h1 {
+            font-size: 22px;
+            margin: 0;
+            color: #333;
+        }
+        .detail-row {
+            margin: 15px 0;
+            text-align: left;
+            padding: 5px 0;
+            border-bottom: 1px dashed #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+        }
+        .detail-row span {
+            font-size: 14px;
+            color: #666;
+            flex-grow: 1;
+        }
+        .detail-row strong {
+            text-align: right;
+            color: #333;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .button-link {
+            display: block;
+            margin-top: 30px;
+            padding: 10px 20px;
+            background-color: #1890ff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        .button-link:hover {
+            background-color: #40a9ff;
+        }
+        .static-data {
+            border-top: 1px solid #d9d9d9;
+            padding-top: 15px;
+            margin-top: 15px;
+        }
+        .static-data h3 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: left;
+        }
+        .redirect-message {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #8c8c8c;
+        }
+    </style>
+</head>
+<body>
+    <div id="result-container" class="container">
+        </div>
 
+    <script>
+        // --- ĐƯỜNG DẪN TRỰC TIẾP ĐẾN LOGO ECLIPSE COFFEE TẠI GỐC DỰ ÁN ---
+        const CUSTOM_LOGO_URL = 'img/trangchu/logo.png'; 
+        // --------------------------------------------------------------------
+
+        function getParameterByName(name, url = window.location.href) {
+            name = name.replace(/[\[\]]/g, '\\$&');
+            var regex = new RegExp('[?&]' + name + '(=([^&#]*)|&|#|$)'),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, ' '));
+        }
+
+        // --- Dữ liệu tĩnh của bạn ---
+        const RECEIVER_ACCOUNT = '0812890078';
+        const RECEIVER_NAME = 'ECLIPSE COFFEE';
+        // ------------------------------
+
+        const status = getParameterByName('status');
+        const orderId = getParameterByName('orderId') || 'N/A';
+        const rawAmount = getParameterByName('amount');
+        
+        // Định dạng số tiền
+        const amount = rawAmount ? (parseFloat(rawAmount)).toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".") + ' VNĐ' : 'N/A';
+        
+        const transactionTime = new Date().toLocaleString('vi-VN', { timeZone: 'Asia/Ho_Chi_Minh', hour12: false });
+        
+        const container = document.getElementById('result-container');
+        
+        let headerHTML = '';
+        let detailsHTML = '';
+        
+        switch (status) {
+            case 'success':
+                container.className += ' success';
+                headerHTML = `
+                    <img src="${CUSTOM_LOGO_URL}" alt="Eclipse Coffee Logo" class="custom-logo">
+                    <div class="status-icon">✓</div>
+                    <h1>Thanh Toán Thành Công</h1>
+                `;
+                detailsHTML = `
+                    <div class="detail-row"><span>Thời gian giao dịch:</span> <strong>${transactionTime}</strong></div>
+                    <div class="detail-row"><span>Mã đơn hàng:</span> <strong>${orderId}</strong></div>
+                    <div class="detail-row"><span>Số tiền thanh toán:</span> <strong>${amount}</strong></div>
+                    <div class="detail-row"><span>Trạng thái:</span> <strong>Đã Thanh Toán</strong></div>
+                `;
+                break;
+            case 'failed':
+                container.className += ' failed';
+                headerHTML = `
+                    <img src="${CUSTOM_LOGO_URL}" alt="Eclipse Coffee Logo" class="custom-logo">
+                    <div class="status-icon">✖</div>
+                    <h1>Giao Dịch Thất Bại</h1>
+                `;
+                detailsHTML = `
+                    <div class="detail-row"><span>Thời gian giao dịch:</span> <strong>${transactionTime}</strong></div>
+                    <div class="detail-row"><span>Mã đơn hàng:</span> <strong>${orderId}</strong></div>
+                    <div class="detail-row"><span>Lý do:</span> <strong>Ngân hàng từ chối hoặc lỗi khác</strong></div>
+                    <div class="detail-row"><span>Trạng thái:</span> <strong>Chưa Thanh Toán</strong></div>
+                `;
+                break;
+            case 'hash_error':
+            default:
+                container.className += ' hash-error';
+                headerHTML = `
+                    <img src="${CUSTOM_LOGO_URL}" alt="Eclipse Coffee Logo" class="custom-logo">
+                    <div class="status-icon">!</div>
+                    <h1>Lỗi Không Xác Định</h1>
+                `;
+                detailsHTML = `<p style="margin-top: 20px;">Vui lòng thử lại hoặc liên hệ nhà cung cấp dịch vụ để kiểm tra.</p>`;
+        }
+        
+        // Thêm thông tin tĩnh về tài khoản nhận
+        const staticDataHTML = `
+            <div class="static-data">
+                <h3>Thông Tin Giao Dịch</h3>
+                <div class="detail-row"><span>Tên Người Bán:</span> <strong>${RECEIVER_NAME}</strong></div>
+                <div class="detail-row"><span>TK Nhận:</span> <strong>${RECEIVER_ACCOUNT}</strong></div>
+            </div>
+        `;
+
+        container.innerHTML = `
+            <div class="logo-section">${headerHTML}</div>
+            <div class="details">${detailsHTML}</div>
+            ${staticDataHTML}
+            <div class="redirect-message">Bạn sẽ được tự động chuyển về trang chủ sau 5 giây...</div>
+            <a href="trangchu.html" class="button-link">Quay về Trang Chủ Ngay</a>
+        `;
+        
+        // Tự động chuyển hướng sau 5 giây
+        setTimeout(() => {
+            window.location.href = 'trangchu.html';
+        }, 5000); // 5000 milliseconds = 5 giây
+        
+    </script>
+</body>
+</html>
