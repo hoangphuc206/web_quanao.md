@@ -139,4 +139,130 @@
     <script src="js/product.js"></script>
 
 
+ <!-- BẮT ĐẦU CODE GỌI MOMO FUNCTION -->
+<script>
+// === Hàm phụ trợ để làm sạch giá tiền và lấy số lượng ===
+function getCartTotalPrice() {
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+    let totalPriceVND = 0;
+    
+    cart.forEach(item => {
+        // Loại bỏ mọi ký tự không phải số và tính tổng
+        const cleanPriceString = (item.price || '0').replace(/[^0-9]/g, '');
+        const price = parseFloat(cleanPriceString) || 0; 
+        
+        totalPriceVND += (price * item.quantity);
+    });
+    
+    return totalPriceVND;
+}
+
+document.addEventListener("DOMContentLoaded", function () {
+    const momoBtn = document.getElementById("checkout-momo");
+    const vnpayBtn = document.getElementById("checkout-vnpay");
+    const codBtn = document.getElementById("checkout-cod");
+
+    // ----------------------------------------------------
+    // Xử lý Thanh toán MOMO
+    // ----------------------------------------------------
+    if (momoBtn) {
+        momoBtn.addEventListener("click", async function () {
+            const totalPrice = getCartTotalPrice();
+
+            if (totalPrice === 0) {
+                alert("Giỏ hàng đang trống!");
+                return;
+            }
+
+            try {
+                // Gọi Netlify Function MoMo
+                const response = await fetch("/.netlify/functions/momo-create", { 
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ amount: totalPrice })
+                });
+
+                const data = await response.json();
+                
+                if (data?.payUrl) {
+                    localStorage.removeItem("cart"); 
+                    window.location.href = data.payUrl;
+                } else {
+                    alert("Lỗi: Không thể tạo URL thanh toán MoMo! Kiểm tra console log.");
+                }
+
+            } catch (err) {
+                console.error("MoMo connection error:", err);
+                alert("Đã xảy ra lỗi kết nối MoMo.");
+            }
+        });
+    }
+
+    // ----------------------------------------------------
+    // Xử lý Thanh toán VNPAY
+    // ----------------------------------------------------
+    if (vnpayBtn) {
+        vnpayBtn.addEventListener("click", async function () {
+            const totalPrice = getCartTotalPrice();
+
+            if (totalPrice === 0) {
+                alert("Giỏ hàng đang trống!");
+                return;
+            }
+            
+            const orderId = 'ECL' + Date.now(); 
+
+            try {
+                // Gọi Netlify Function VNPAY
+                const response = await fetch("/.netlify/functions/vnpay-create", { 
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        amount: totalPrice,
+                        orderId: orderId,
+                        orderInfo: `Thanh toan don hang ${orderId} tren Eclipse Coffee` 
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.statusCode && data.statusCode !== 200) {
+                     alert("Lỗi server VNPAY: " + (data.message || 'Lỗi không xác định.'));
+                     return;
+                }
+
+                if (data?.vnpUrl) {
+                    localStorage.removeItem("cart"); 
+                    window.location.href = data.vnpUrl; // Chuyển hướng đến cổng VNPAY
+                } else {
+                    alert("Lỗi: Không thể tạo URL thanh toán VNPAY! Kiểm tra console log.");
+                }
+
+            } catch (err) {
+                console.error("VNPAY connection error:", err);
+                alert("Đã xảy ra lỗi kết nối VNPAY.");
+            }
+        });
+    }
+
+    // ----------------------------------------------------
+    // Xử lý Thanh toán COD (Thanh toán khi nhận hàng)
+    // ----------------------------------------------------
+    if (codBtn) {
+        codBtn.addEventListener("click", function() {
+            if (getCartTotalPrice() === 0) {
+                alert("Giỏ hàng đang trống!");
+                return;
+            }
+            // Logic đơn giản cho COD
+            localStorage.removeItem("cart");
+            alert("Đơn hàng của bạn đã được đặt và sẽ được giao. Cảm ơn bạn!");
+            window.location.href = "Trangchu.html"; // Chuyển về trang chủ sau khi đặt hàng
+        });
+    }
+
+});
+</script>
+    
+
 </html>
