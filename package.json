@@ -8,16 +8,16 @@
  },
  "repository": {
   "type": "git",
-  "url": "git+https://github.com/nguyendaotuanh05-collab/web_coffee.git"
+  "url": "git+https://github.com/hoangphuc206/web_quanao.md.git" 
  },
  "keywords": [],
  "author": "",
  "license": "ISC",
  "type": "commonjs",
  "bugs": {
-  "url": "https://github.com/nguyendaotuanh05-collab/web_coffee/issues"
+  "url": "https://github.com/hoangphuc206/web_quanao.md/issues"
 },
- "homepage": "https://github.com/nguyendaotuanh05-collab/web_coffee#readme",
+ "homepage": "https://github.com/hoangphuc206/web_quanao.md#readme",
  "dependencies": {
  "axios": "^1.13.2",
  "crypto-js": "^4.2.0",
