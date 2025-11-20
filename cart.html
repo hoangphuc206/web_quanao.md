@@ -200,95 +200,65 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // ----------------------------------------------------
     // Xử lý Thanh toán VNPAY
-    // ----------------------------------------------------
     if (vnpayBtn) {
-    vnpayBtn.addEventListener("click", async function (e) {
-        e.preventDefault(); // Ngăn chặn hành vi mặc định của nút
+        vnpayBtn.addEventListener("click", async function () {
+            const totalPrice = getCartTotalPrice();
 
-        const totalPrice = getCartTotalPrice();
-
-        if (totalPrice === 0) {
-            alert("Giỏ hàng đang trống! Vui lòng thêm sản phẩm.");
-            return;
-        }
-        
-        // 🚨 Tạo Order ID DUY NHẤT. Ví dụ: FNV (Tên Cửa hàng) + Timestamp
-        const orderId = 'FNV' + Date.now();
-        
-        // Hiển thị trạng thái tải (loading)
-        // showLoading(); 
-
-        try {
-            // Gọi Netlify Function VNPAY
-            const response = await fetch("/.netlify/functions/vnpay-create", { 
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({
-                    amount: totalPrice,
-                    orderId: orderId,
-                    // Dùng tên cửa hàng của bạn
-                    orderInfo: `Thanh toan don hang ${orderId} tren F&V Store` 
-                })
-            });
-
-            // Nếu phản hồi HTTP không thành công (ví dụ: 500 Server Error)
-            if (!response.ok) {
-                 const errorData = await response.json();
-                 throw new Error(errorData.message || `Lỗi HTTP: ${response.status}`);
+            if (totalPrice === 0) {
+                alert("Giỏ hàng đang trống!");
+                return;
             }
-
-            const data = await response.json();
             
-            // 🚨 BƯỚC KHẮC PHỤC LỖI: Kiểm tra vnpUrl
-            if (data?.vnpUrl) {
-                // 1. Dọn dẹp giỏ hàng (Chỉ nên dọn dẹp khi giao dịch thành công trên VNPAY hoặc khi RETURN URL/IPN trả về)
-                // Tuy nhiên, nếu bạn muốn dọn dẹp ngay để tránh người dùng đặt lại, bạn có thể giữ lại.
-                // localStorage.removeItem("cart"); 
+            const orderId = 'ECL' + Date.now(); 
+
+            try {
+                // Gọi Netlify Function VNPAY
+                const response = await fetch("/.netlify/functions/vnpay-create", { 
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        amount: totalPrice,
+                        orderId: orderId,
+                        orderInfo: `Thanh toan don hang ${orderId} tren Eclipse Coffee` 
+                    })
+                });
+
+                const data = await response.json();
                 
-                // 2. Chuyển hướng đến cổng VNPAY
-                window.location.href = data.vnpUrl; 
-            } else {
-                // Lỗi khi server trả về OK nhưng không có vnpUrl
-                alert("Lỗi: Server đã xử lý nhưng không nhận được URL thanh toán. Vui lòng thử lại.");
-                console.error("VNPAY API Response:", data);
+                if (data.statusCode && data.statusCode !== 200) {
+                     alert("Lỗi server VNPAY: " + (data.message || 'Lỗi không xác định.'));
+                     return;
+                }
+
+                if (data?.vnpUrl) {
+                    localStorage.removeItem("cart"); 
+                    window.location.href = data.vnpUrl; // Chuyển hướng đến cổng VNPAY
+                } else {
+                    alert("Lỗi: Không thể tạo URL thanh toán VNPAY! Kiểm tra console log.");
+                }
+
+            } catch (err) {
+                console.error("VNPAY connection error:", err);
+                alert("Đã xảy ra lỗi kết nối VNPAY.");
             }
+        });
+    }
 
-        } catch (err) {
-            console.error("VNPAY Connection/Server Error:", err);
-            alert(`Đã xảy ra lỗi trong quá trình tạo liên kết VNPAY: ${err.message || 'Lỗi không xác định.'}`);
-        } finally {
-            // Ẩn trạng thái tải, bất kể thành công hay thất bại
-            // hideLoading(); 
-        }
-    });
-}
-
-// ------------------------------------------------------------------------------------
-// ## 📦 Xử lý Thanh toán COD (Thanh toán khi nhận hàng)
-// ------------------------------------------------------------------------------------
-if (codBtn) {
-    codBtn.addEventListener("click", function(e) {
-        e.preventDefault(); // Ngăn chặn hành vi mặc định
-
-        if (getCartTotalPrice() === 0) {
-            alert("Giỏ hàng đang trống! Vui lòng thêm sản phẩm.");
-            return;
-        }
-
-        // 🚨 THAY THẾ bằng logic xử lý đơn hàng COD thực tế của bạn
-        // 1. Gửi dữ liệu đơn hàng COD lên Server/Netlify Function
-        // Ví dụ: await fetch("/.netlify/functions/create-cod-order", { ... });
-        // 2. Xử lý phản hồi từ server
-        
-        // Logic đơn giản cho COD
-        localStorage.removeItem("cart");
-        alert("Đơn hàng của bạn đã được đặt thành công (COD) và đang được xử lý. Cảm ơn bạn!");
-        
-        // 🚨 THAY ĐỔI: Chuyển về trang kết quả hoặc trang chủ.
-        // Dựa trên hình ảnh, tôi dùng trang chủ:
-        window.location.href = "/"; // Hoặc là "/Trangchu.html" nếu bạn đặt tên như vậy
-    });
-}
+    // ----------------------------------------------------
+    // Xử lý Thanh toán COD (Thanh toán khi nhận hàng)
+    // ----------------------------------------------------
+    if (codBtn) {
+        codBtn.addEventListener("click", function() {
+            if (getCartTotalPrice() === 0) {
+                alert("Giỏ hàng đang trống!");
+                return;
+            }
+            // Logic đơn giản cho COD
+            localStorage.removeItem("cart");
+            alert("Đơn hàng của bạn đã được đặt và sẽ được giao. Cảm ơn bạn!");
+            window.location.href = "index.html"; // Chuyển về trang chủ sau khi đặt hàng
+        });
+    }
 
 });
 </script>
