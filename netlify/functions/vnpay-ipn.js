@@ -35,7 +35,7 @@ exports.handler = async (event) => {
     try {
         const query = event.queryStringParameters;
         
-  
+        // Lấy URL gốc của website (ví dụ: https://23dh.netlify.app/)
         // Dùng header.host để lấy domain hiện tại
         const siteUrl = event.headers.host ? `https://${event.headers.host}` : 'https://cheery-tapioca-04ea65.netlify.app/';
 
